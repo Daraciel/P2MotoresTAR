@@ -37,6 +37,8 @@ public class Main {
 	private static void Prueba()
 	{
 		LCD.clear();
+		
+		
 		final DifferentialPilot pilot = new DifferentialPilot(43.2,155.0,Motor.C,Motor.B);
 		
 		pilot.setAcceleration(400);
@@ -100,12 +102,12 @@ public class Main {
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(720.0);
 		
-		pilot.rotate(180.0);
-
-		float angle = pilot.getAngleIncrement();
+		Movimiento m = new Movimiento(pilot);
+		m.start();
 		
-		while(pilot.isMoving())Thread.yield();
-		LCD.drawString("hola " + angle, 0, 0);		
+		Pantalla p = new Pantalla(pilot);
+		p.start();
+
 	}
 	
 	private static void Mision2()
