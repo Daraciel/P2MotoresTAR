@@ -2,7 +2,7 @@ package TAR;
 
 import lejos.robotics.navigation.DifferentialPilot;
 
-public class Movimiento extends Thread
+public class Movimiento implements Runnable
 {
 	DifferentialPilot pilot;
 	Movimiento(DifferentialPilot p)
@@ -12,6 +12,14 @@ public class Movimiento extends Thread
 	
 	public void run()
 	{
-		pilot.rotate(180.0);
+        try 
+        {
+			Thread.sleep(200);
+			pilot.rotate(180.0);
+		} catch (InterruptedException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

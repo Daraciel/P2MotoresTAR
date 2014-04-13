@@ -103,10 +103,10 @@ public class Main {
 		pilot.setTravelSpeed(720.0);
 		
 		Movimiento m = new Movimiento(pilot);
-		m.start();
+		new Thread(m).start();
 		
 		Pantalla p = new Pantalla(pilot);
-		p.start();
+		new Thread(p).start();
 
 	}
 	
