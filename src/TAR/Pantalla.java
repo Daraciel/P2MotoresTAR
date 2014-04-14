@@ -12,6 +12,7 @@ public class Pantalla implements Runnable
 		pilot = p;
 	}
 	
+	//Mostramos por pantalla lo que nos dice los encodes de los angulos
 	public void run()
 	{
 		float angle = 0;
@@ -22,10 +23,12 @@ public class Pantalla implements Runnable
 			
 			LCD.clear();
 
-			LCD.drawString("Prueba de angulos", 0, 0);	
+			LCD.drawString("Prueba de angulos", 0, 0);
+			//mientras se este moviendo
 			while(pilot.isMoving())
 			{
-				Thread.sleep(100);	
+				Thread.sleep(100);
+				//mostramos el angulo
 				angle = pilot.getAngleIncrement();
 				LCD.drawString("Angulo: " + angle, 0, 1);	
 			}

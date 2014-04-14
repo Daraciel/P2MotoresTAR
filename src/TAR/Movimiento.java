@@ -11,6 +11,8 @@ public class Movimiento implements Runnable
 		pilot = p;
 	}
 	
+	//En esta clase, unicamente ejecutamos el movimiento
+	//que queramos, en este caso, 180 grados
 	public void run()
 	{
         try 
