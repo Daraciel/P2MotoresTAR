@@ -10,6 +10,8 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.NXTSoundSensor;
 import lejos.hardware.sensor.SensorConstants;
+import lejos.hardware.motor.Motor;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.SampleProvider;
 
 
@@ -27,6 +29,10 @@ public class Sensores
 	
 	
 	
+	//distancia entre ruedas
+	private static double axisDistance=159.0;
+	//diametro de la rueda
+	private static double wheelRadius=42.0;
 	
 /*mision3_1*/
 	
@@ -35,10 +41,15 @@ public class Sensores
 	public void mision3_1()
 	{
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		pilot.setAcceleration(400);
+		pilot.setRotateSpeed(100.0);
+		pilot.setTravelSpeed(720.0);
 	
 		while(!isPressed(touch))
 		{
 			//muevete hacia adelante
+			pilot.travel(10.0);
 		}
 	
 	}
@@ -59,23 +70,27 @@ public class Sensores
 				cont++;
 		}
 	
-		while(!isPressed(touch)){
-			mueveteYGira(touch, 360/cont, distancia);
-		}
+		while(mueveteYGira(touch, 360/cont, distancia));
 	}
 	
-	private void mueveteYGira(EV3TouchSensor touch, double giro, double distancia)
+	private boolean mueveteYGira(EV3TouchSensor touch, double giro, double distancia)
 	{
+		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		pilot.setAcceleration(400);
+		pilot.setRotateSpeed(100.0);
+		pilot.setTravelSpeed(720.0);
 		//mueve distancia
-	
+		pilot.travel(distancia);
 		if(isPressed(touch))
 		{
-		
+			return false;
 		}
-			//exit
-	
-		//gira giro
-	
+		pilot.rotate(giro);
+		if(isPressed(touch))
+		{
+			return false;
+		}
+		return true;
 	}
 	/*end 3_2 */
 
