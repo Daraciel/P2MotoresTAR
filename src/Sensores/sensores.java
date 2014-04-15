@@ -15,8 +15,23 @@ import lejos.robotics.SampleProvider;
 
 public class Sensores 
 {
+	public static void main(String[] args)
+    {
+		LCD.drawString("Pograma!", 0, 0);
+		Button.waitForAnyPress(4000);
+		LCD.clear();
+		mision4_1();
+    
+    }
+	
+	
+	
+	
 	
 /*mision3_1*/
+	
+	
+	
 	public void mision3_1()
 	{
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
@@ -65,20 +80,27 @@ public class Sensores
 	/*end 3_2 */
 
 	/*mision 4_1*/
-	public void mision4_1()
+	public static void mision4_1()
 	{
-		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S2);
+		LCD.drawString("mision 4_1", 0, 0);
+		Button.waitForAnyPress(4000);
+		LCD.clear();
+		int but=0;
+		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S1);
 		//To get the Color
-		float[] sample = new float[colSensor.sampleSize()];
-		while(true)
+		//float[] sample = new float[colSensor.sampleSize()];
+		float[] sample = new float[100];
+		while(but == 0)
 		{
-			colSensor.getRGBMode().fetchSample(sample, 0);
+			colSensor.getRedMode().fetchSample(sample, 0);
 			LCD.drawString("R: "+sample[0], 0, 0);
 			LCD.drawString("G: "+sample[1], 0, 1);
 			LCD.drawString("B: "+sample[2], 0, 2);
 			LCD.drawString("Color: "+colSensor.getColorID(), 0, 3);
 			LCD.drawString("Luz: "+colSensor.getFloodlight(), 0, 4);
+			but = Button.readButtons();
 		}
+		colSensor.close();
 	
 		//To get the reflection/ambient:
 	}
@@ -108,7 +130,7 @@ public class Sensores
 		while(isPressed(touch)){
 			sonar.enable();
 			SampleProvider distanceAct = sonar.getDistanceMode();
-			mueveteYGira(touch,0,distanciaAnt - distanceAct);
+			//mueveteYGira(touch,0,distanciaAnt - distanceAct);
 			distanciaAnt = distanceAct;
 			sonar.disable();
 		}
@@ -121,14 +143,14 @@ public class Sensores
 		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
 		sonar.enable();
 		while(!isPressed(touch)){
-			sonar.enable();
+			sonar.enable();/*
 			if(sonar.getDistanceMode()<20)
 			{
 				mueveteYGira(touch, 90, 0);
 			}
 			else{
 				mueveteYGira(touch, 0, 20);
-			}
+			}*/
 	
 			sonar.disable();
 		}
