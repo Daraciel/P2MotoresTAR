@@ -1,102 +1,154 @@
+package Sensores;
+import javax.sound.sampled.Port;
 
+import lejos.hardware.Button;
+import lejos.hardware.lcd.LCD;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.port.UARTPort;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3TouchSensor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.hardware.sensor.NXTSoundSensor;
+import lejos.hardware.sensor.SensorConstants;
+import lejos.robotics.SampleProvider;
+
+
+public class Sensores 
+{
+	
 /*mision3_1*/
-public void mision3_1(){
-	EV3TouchSensor touch = new EV3TouchSensor((ADSensorPort) SensorPort.S1);
-
-	while(!touch2.isPressed())
-		//muevete hacia adelante
-
-}
+	public void mision3_1()
+	{
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+	
+		while(!isPressed(touch))
+		{
+			//muevete hacia adelante
+		}
+	
+	}
 /*end 3_1*/
 
-/*mision3_2*/
-public void mision3_2(){
-	EV3TouchSensor touch = new EV3TouchSensor((ADSensorPort) SensorPort.S1);
-
-	int cont = 0;
-	int delay = 3000;
-	while(!touch.isPressed()){}
-	cont++;
-	while(delay <= 0){
-		if(touch.isPressed())
-			cont++;
+	/*mision3_2*/
+	public void mision3_2()
+	{
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+	
+		int cont = 0;
+		int delay = 3000;
+		double distancia =0;
+		while(!isPressed(touch)){}
+		cont++;
+		while(delay <= 0){
+			if(isPressed(touch))
+				cont++;
+		}
+	
+		while(!isPressed(touch)){
+			mueveteYGira(touch, 360/cont, distancia);
+		}
 	}
-
-	while(!touch.isPressed()){
-		mueveteYGira(touch, 360/cont, distancia);
+	
+	private void mueveteYGira(EV3TouchSensor touch, double giro, double distancia)
+	{
+		//mueve distancia
+	
+		if(isPressed(touch))
+		{
+		
+		}
+			//exit
+	
+		//gira giro
+	
 	}
-}
-private void mueveteYGira(EV3TouchSensor touch, double giro, double distancia){
-	//mueve distancia
+	/*end 3_2 */
 
-	if(touch.isPressed())
-		//exit
-
-	//gira giro
-
-}
-/*end 3_2 */
-
-/*mision 4_1*/
-public void mision4_1(){
-	EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S2);
-	//To get the Color
-	System.out.println(colSensor.getColorID());
-
-	//To get the reflection/ambient:
-	float[] buf = new float[colSensor.getMode(/* the mode number/string here */).sampleSize()];
-	System.out.println(colSensor.getMode(/* the mode number/string here */).fetchSample(buf, 0));
-}
+	/*mision 4_1*/
+	public void mision4_1()
+	{
+		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S2);
+		//To get the Color
+		float[] sample = new float[colSensor.sampleSize()];
+		while(true)
+		{
+			colSensor.getRGBMode().fetchSample(sample, 0);
+			LCD.drawString("R: "+sample[0], 0, 0);
+			LCD.drawString("G: "+sample[1], 0, 1);
+			LCD.drawString("B: "+sample[2], 0, 2);
+			LCD.drawString("Color: "+colSensor.getColorID(), 0, 3);
+			LCD.drawString("Luz: "+colSensor.getFloodlight(), 0, 4);
+		}
+	
+		//To get the reflection/ambient:
+	}
 
 /*mision 4_2*/
-public void mision4_2(){ //si detecta un choque debe salir
-
-	EV3TouchSensor touch = new EV3TouchSensor((ADSensorPort) SensorPort.S1);
-	EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S2);
-	while(!touch.isPressed()){
-		if(colSensor.getColorID() == NEGRO)
-			mueveteYGira(touch, 180, 0); //se moverá una pequeña distancia para ir comprobando la luz
-		else
-			mueveteYGira(touch, 0, 10); //se moverá una pequeña distancia para ir comprobando la luz
-	}
-
-}
-
-public void mision5_1(){
-	EV3TouchSensor touch = new EV3TouchSensor((ADSensorPort) SensorPort.S1);
-	EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
-	double distanciaAnt = sonar.getDistanceMode();
-	while(!touch.isPressed()){
-		sonar.enable();
-		double distanceAct = sonar.getDistanceMode();
-		mueveteYGira(touch,0,distanciaAnt - distanceAct);
-		distanciaAnt = distanceAct;
-		sonar.disable();
-	}
-}
-
-public void mision5_2(){
-
-	EV3TouchSensor touch = new EV3TouchSensor((ADSensorPort) SensorPort.S1);
-	EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
-
-	while(!touch.isPressed()){
-		sonar.enable();
-		if(sonar.getDistanceMode()<20)
+	public void mision4_2()
+	{ //si detecta un choque debe salir
+	
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S2);
+		while(isPressed(touch))
 		{
-			mueveteYGira(touch, 90, 0);
+			if(colSensor.getColorID() == SensorConstants.BLACK)
+				mueveteYGira(touch, 180, 0); //se moverá una pequeña distancia para ir comprobando la luz
+			else
+				mueveteYGira(touch, 0, 10); //se moverá una pequeña distancia para ir comprobando la luz
 		}
-		else{
-			mueveteYGira(touch, 0, 20);
-		}
-
-		sonar.disable();
+	
 	}
-}
 
-public void mision6(){
-	NXTSoundSensor sound = new NXTSoundSensor(Port.S4);
-}
+	public void mision5_1()
+	{
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
+		sonar.enable();
+		SampleProvider distanciaAnt = sonar.getDistanceMode();
+		while(isPressed(touch)){
+			sonar.enable();
+			SampleProvider distanceAct = sonar.getDistanceMode();
+			mueveteYGira(touch,0,distanciaAnt - distanceAct);
+			distanciaAnt = distanceAct;
+			sonar.disable();
+		}
+	}
 
+	public void mision5_2()
+	{
+	
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
+		sonar.enable();
+		while(!isPressed(touch)){
+			sonar.enable();
+			if(sonar.getDistanceMode()<20)
+			{
+				mueveteYGira(touch, 90, 0);
+			}
+			else{
+				mueveteYGira(touch, 0, 20);
+			}
+	
+			sonar.disable();
+		}
+	}
+
+	public void mision6()
+	{
+		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
+	}
+	
+	  public boolean isPressed(EV3TouchSensor sensor) 
+	  {
+		  
+		  float[] sample = new float[sensor.sampleSize()];
+		  sensor.fetchSample(sample, 0);
+		  if (sample[0] == 0)
+			  return false;
+		  return true;
+	  }
+
+}
 
 
