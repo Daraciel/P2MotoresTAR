@@ -26,9 +26,8 @@ public class Sensores
 		int mode = 0;
 		int resul = 0;
 		int salir = menu.length;
-		mision4_2();
 		
-		/*do
+		do
 		{
 			//borramos la pantalla
 			LCD.clear();
@@ -56,7 +55,7 @@ public class Sensores
 		        Button.waitForAnyPress(4000);
 	        }
 		}
-		while(mode != salir);*/
+		while(mode != salir);
     
     }
 	
