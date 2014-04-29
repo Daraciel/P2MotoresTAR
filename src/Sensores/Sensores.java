@@ -26,7 +26,7 @@ public class Sensores
 		int mode = 0;
 		int resul = 0;
 		int salir = menu.length;
-		mision4_1();
+		mision4_2();
 		
 		/*do
 		{
@@ -195,15 +195,28 @@ public class Sensores
 	public static void mision4_2()
 	{ //si detecta un choque debe salir
 	
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
-		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S2);
+		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		pilot.setAcceleration(400);
+		pilot.setRotateSpeed(100.0);
+		pilot.setTravelSpeed(10.0);
+		
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
+		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S1);
 		while(!isPressed(touch))
 		{
 			if(colSensor.getColorID() == SensorConstants.WHITE)
-				mueveteYGira(touch, 180, 0); //se moverá una pequeña distancia para ir comprobando la luz
+			{
+				pilot.rotate(180);
+				System.out.println("Detectado blanco. Girando 180�...");
+			}
 			else
-				mueveteYGira(touch, 0, 10); //se moverá una pequeña distancia para ir comprobando la luz
+			{
+				pilot.forward(); //se moverá una pequeña distancia para ir comprobando la luz
+			}
 		}
+		
+		pilot.stop();
+		colSensor.close();
 	
 	}
 
