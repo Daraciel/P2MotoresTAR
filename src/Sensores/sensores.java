@@ -173,9 +173,9 @@ public class Sensores
 
 	public void mision6()
 	{
-		//NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
+		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
 
-		SoundSensor sound = new SoundSensor((ADSensorPort) SensorPort.S4);
+		//SoundSensor sound = new SoundSensor(SensorPort.S4);
 
 	    LCD.clear();
 
@@ -189,7 +189,7 @@ public class Sensores
 	    System.exit(0);
 	}
 
-	public int readValue(SoundSensor port){
+	public int readValue(NXTSoundSensor port){
     	return ((1023 - port.getShort()) * 100/ 1023);  
    	}
 	
