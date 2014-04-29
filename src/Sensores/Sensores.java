@@ -208,14 +208,14 @@ public class Sensores
 	public static void mision6() throws InterruptedException
 	{
 		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 
 	    LCD.clear();
 	    int cont =0;
 	    while (!Button.ESCAPE.isDown()) {
 	        LCD.drawString("SS: " + sonidos(sound), 0, 0);
 	        System.out.println("SS: " + sonidos(sound));
-	        if(sonidos(sound)>0.2){
+	        if(sonidos(sound)>0.8){
 	        	cont++;
 	        }
 	        else{ //acciones
