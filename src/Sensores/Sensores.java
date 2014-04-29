@@ -72,7 +72,7 @@ public class Sensores
 	
 	public static void mision3_1()
 	{
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
@@ -90,7 +90,7 @@ public class Sensores
 	/*mision3_2*/
 	public static void mision3_2()
 	{
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 	
 		int cont = 0;
 		int delay = 3000;
