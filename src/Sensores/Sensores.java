@@ -223,16 +223,18 @@ public class Sensores
 
 	public static void mision5_1()
 	{
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		int but=0;
+		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
 		sonar.enable();
 		SampleProvider distanciaAnt = sonar.getDistanceMode();
-		while(isPressed(touch)){
+		while(but == 0){
 			sonar.enable();
 			SampleProvider distanceAct = sonar.getDistanceMode();
 			//mueveteYGira(touch,0,distanciaAnt - distanceAct);
 			distanciaAnt = distanceAct;
 			sonar.disable();
+			but = Button.readButtons();
 		}
 	}
 
