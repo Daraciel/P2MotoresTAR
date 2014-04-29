@@ -96,7 +96,7 @@ public class Sensores
 	
 		int cont = 0;
 		int delay = 3000;
-		double distancia =0;
+		double distancia = 100;
 		while(!isPressed(touch)){}
 		cont++;
 		while(Button.readButtons()==0){
