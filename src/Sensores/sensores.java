@@ -54,7 +54,7 @@ public class Sensores
 		        Button.waitForAnyPress(4000);
 	        }
 		}
-		while(mode != 6);
+		while(mode != salir);
     
     }
 	
@@ -72,17 +72,19 @@ public class Sensores
 	
 	public static void mision3_1()
 	{
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(720.0);
-	
+
+		pilot.forward();
 		while(!isPressed(touch))
 		{
 			//muevete hacia adelante
-			pilot.travel(10.0);
+			//pilot.travel(10.0);
 		}
+		pilot.stop();
 	
 	}
 /*end 3_1*/
