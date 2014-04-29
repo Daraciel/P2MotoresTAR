@@ -209,7 +209,11 @@ public class Sensores
 	{
 		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
-
+		pilot.setAcceleration(400);
+		pilot.setRotateSpeed(100.0);
+		pilot.setTravelSpeed(720.0);
+		
+		
 	    LCD.clear();
 	    int cont =0;
 	    while (!Button.ESCAPE.isDown()) {
@@ -220,13 +224,13 @@ public class Sensores
 	        }
 	        else{ //acciones
 	        	switch(cont){
-	        		case 1: LCD.drawString("Moviendome indefinidamente", 10, 0);
+	        		case 1: LCD.drawString("Moviendome indefinidamente", 0, 50);
 	        				pilot.forward();
 	        			break;
-	        		case 2: pilot.rotateRight(); LCD.drawString("Hacia la derecha", 10, 0);
+	        		case 2: pilot.rotateRight(); LCD.drawString("Hacia la derecha", 0, 50);
 	        			break;
-	        		case 3: pilot.rotate(-360); LCD.drawString("Rotamos y paro", 10, 0);
-	        				pilot.Stop();
+	        		case 3: pilot.rotate(-360); LCD.drawString("Rotamos y paro", 0, 50);
+	        				pilot.stop();
 	        			break;
 	        	}
 	        	cont = 0;
