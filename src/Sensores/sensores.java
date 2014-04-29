@@ -175,13 +175,11 @@ public class Sensores
 	{
 		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
 
-		//SoundSensor sound = new SoundSensor(SensorPort.S4);
-
 	    LCD.clear();
 
 	    while (!Button.ESCAPE.isDown()) {
-	        LCD.drawString("SS: " + sound.readValue(), 0, 0);
-	        System.out.println("SS: " + sound.readValue());
+	        LCD.drawString("SS: " + sonidos(sound), 0, 0);
+	        System.out.println("SS: " + sonidos(sound));
 	        Thread.sleep(20);
 	    }
 
@@ -189,8 +187,10 @@ public class Sensores
 	    System.exit(0);
 	}
 
-	public int readValue(NXTSoundSensor port){
-    	return ((1023 - port.getShort()) * 100/ 1023);  
+	public float sonidos(NXTSoundSensor port){
+		float[] sample = new float[port.sampleSize()];
+		sensor.fetchSample(sample,0);
+		return sample[0];
    	}
 	
 	  public boolean isPressed(EV3TouchSensor sensor) 
