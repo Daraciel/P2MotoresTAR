@@ -76,7 +76,7 @@ public class Sensores
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
-		pilot.setTravelSpeed(720.0);
+		pilot.setTravelSpeed(180.0);
 
 		pilot.forward();
 		while(!isPressed(touch))
@@ -99,7 +99,7 @@ public class Sensores
 		double distancia =0;
 		while(!isPressed(touch)){}
 		cont++;
-		while(delay <= 0){
+		while(Button.readButtons()==0){
 			if(isPressed(touch))
 				cont++;
 		}
