@@ -227,29 +227,30 @@ public class Sensores
 	public static void mision6() throws InterruptedException
 	{
 		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 
 	    LCD.clear();
 	    int cont =0;
 	    while (!Button.ESCAPE.isDown()) {
 	        LCD.drawString("SS: " + sonidos(sound), 0, 0);
 	        System.out.println("SS: " + sonidos(sound));
-	        if(sonidos(sound)>0.2){
+	        if(sonidos(sound)>0.8){
 	        	cont++;
 	        }
 	        else{ //acciones
 	        	switch(cont){
-	        		case 1: mueveteYGira(touch, 0, 2000);
+	        		case 1: LCD.drawString("Moviendome indefinidamente", 10, 0);
+	        				pilot.forward();
 	        			break;
-	        		case 2: mueveteYGira(touch, 180, 0); //giro a la derecha
-	        				mueveteYGira(touch, 0, 2000);
+	        		case 2: pilot.rotateRight(); LCD.drawString("Hacia la derecha", 10, 0);
 	        			break;
-	        		case 3: mueveteYGira(touch, -360, 0);
+	        		case 3: pilot.rotate(-360); LCD.drawString("Rotamos y paro", 10, 0);
+	        				pilot.stop();
 	        			break;
 	        	}
 	        	cont = 0;
 	        }
-	        Thread.sleep(200);
+	        Thread.sleep(20);
 	    }
 
 	    System.out.println("EXIT");
