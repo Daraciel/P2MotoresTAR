@@ -179,9 +179,9 @@ public class Sensores
 	
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S2);
-		while(isPressed(touch))
+		while(!isPressed(touch))
 		{
-			if(colSensor.getColorID() == SensorConstants.BLACK)
+			if(colSensor.getColorID() == SensorConstants.WHITE)
 				mueveteYGira(touch, 180, 0); //se moverá una pequeña distancia para ir comprobando la luz
 			else
 				mueveteYGira(touch, 0, 10); //se moverá una pequeña distancia para ir comprobando la luz
