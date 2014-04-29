@@ -199,12 +199,13 @@ public class Sensores
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(10.0);
-		
+		float[] sample = new float[100];
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S1);
 		while(!isPressed(touch))
 		{
-			if(colSensor.getColorID() == SensorConstants.WHITE)
+			colSensor.getRGBMode().fetchSample(sample, 0);
+			if(sample[0]>0.1 && sample[1]>0.1 && sample[2]>0.1)
 			{
 				pilot.rotate(180);
 				System.out.println("Detectado blanco. Girando 180º...");
