@@ -13,16 +13,48 @@ import lejos.hardware.sensor.SensorConstants;
 import lejos.hardware.motor.Motor;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.SampleProvider;
+import lejos.utility.TextMenu;
 
 
 public class Sensores 
 {
-	public static void main(String[] args)
+
+	private static String[] menu ={"Mision 3_1","Mision 3_2","Mision 4_1","Mision 4_2","Mision 5_1","Mision 5_2","Mision 6","Salir"};
+	
+	public static void main(String[] args) throws InterruptedException
     {
-		LCD.drawString("Pograma!", 0, 0);
-		Button.waitForAnyPress(4000);
-		LCD.clear();
-		mision4_1();
+		int mode = 0;
+		int resul = 0;
+		int salir = menu.length;
+		do
+		{
+			//borramos la pantalla
+			LCD.clear();
+			//creamos el nuevo menu con el array de stirings
+	        TextMenu modeMenu = new TextMenu(menu, 1, "Misiones");
+	        //ponemos el modo a selección, para que el usuario pueda seleccionar
+	        mode = modeMenu.select();
+	        //borramos la pantalla, ya que ha seleccionado algo el usuario
+	        LCD.clear();
+	        
+	        //Dependiendo de lo seleccionado, ejecutamos uno u otro
+	        switch(mode)
+	        {
+	        	case 0: LCD.drawString("Ejecutando mision\n 3_1...", 0, 0); mision3_1(); break;
+	        	case 1: LCD.drawString("Ejecutando mision\n 3_2...", 0, 0); mision3_2(); break;
+	        	case 2: LCD.drawString("Ejecutando mision\n 4_1...", 0, 0); mision4_1(); break;
+	        	case 3: LCD.drawString("Ejecutando mision\n 4_2...", 0, 0); mision4_2(); break;
+	        	case 4: LCD.drawString("Ejecutando mision\n 5_1...", 0, 0); mision5_1(); break;
+	        	case 5: LCD.drawString("Ejecutando mision\n 5_2...", 0, 0); mision5_2(); break;
+	        	case 6: LCD.drawString("Ejecutando mision\n 6...", 0, 0); mision6(); break;
+	        }
+	        if(mode!=salir)
+	        {
+		        LCD.drawString("Presiona un boton para continuar",0,7);
+		        Button.waitForAnyPress(4000);
+	        }
+		}
+		while(mode != 6);
     
     }
 	
@@ -38,7 +70,7 @@ public class Sensores
 	
 	
 	
-	public void mision3_1()
+	public static void mision3_1()
 	{
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
@@ -56,7 +88,7 @@ public class Sensores
 /*end 3_1*/
 
 	/*mision3_2*/
-	public void mision3_2()
+	public static void mision3_2()
 	{
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 	
@@ -73,7 +105,7 @@ public class Sensores
 		while(mueveteYGira(touch, 360/cont, distancia));
 	}
 	
-	private boolean mueveteYGira(EV3TouchSensor touch, double giro, double distancia)
+	private static boolean mueveteYGira(EV3TouchSensor touch, double giro, double distancia)
 	{
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
@@ -121,7 +153,7 @@ public class Sensores
 	}
 
 /*mision 4_2*/
-	public void mision4_2()
+	public static void mision4_2()
 	{ //si detecta un choque debe salir
 	
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
@@ -136,7 +168,7 @@ public class Sensores
 	
 	}
 
-	public void mision5_1()
+	public static void mision5_1()
 	{
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
@@ -151,7 +183,7 @@ public class Sensores
 		}
 	}
 
-	public void mision5_2()
+	public static void mision5_2()
 	{
 	
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
@@ -171,12 +203,32 @@ public class Sensores
 		}
 	}
 
-	public void mision6()
+	public static void mision6() throws InterruptedException
 	{
 		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
+
+	    LCD.clear();
+
+	    while (!Button.ESCAPE.isDown()) {
+
+	        //LCD.drawString("SS: " + sound.readValue(), 0, 0);
+	        //System.out.println("SS: " + sound.readValue());
+	        LCD.drawString("SS: " + sonidos(sound), 0, 0);
+	        System.out.println("SS: " + sonidos(sound));
+	        Thread.sleep(20);
+	    }
+
+	    System.out.println("EXIT");
+	    System.exit(0);
 	}
 	
-	  public boolean isPressed(EV3TouchSensor sensor) 
+	public static float sonidos(NXTSoundSensor port){
+		float[] sample = new float[port.sampleSize()];
+		port.fetchSample(sample,0);
+		return sample[0];
+   	}
+	
+	  public static boolean isPressed(EV3TouchSensor sensor) 
 	  {
 		  
 		  float[] sample = new float[sensor.sampleSize()];
