@@ -54,7 +54,7 @@ public class Sensores
 		        Button.waitForAnyPress(4000);
 	        }
 		}
-		while(mode != 6);
+		while(mode != salir);
     
     }
 	
@@ -77,12 +77,14 @@ public class Sensores
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(720.0);
-	
+
+		pilot.forward();
 		while(!isPressed(touch))
 		{
 			//muevete hacia adelante
-			pilot.travel(10.0);
+			//pilot.travel(10.0);
 		}
+		pilot.stop();
 	
 	}
 /*end 3_1*/
