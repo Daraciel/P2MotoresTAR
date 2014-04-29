@@ -26,7 +26,9 @@ public class Sensores
 		int mode = 0;
 		int resul = 0;
 		int salir = menu.length;
-		do
+		mision4_1();
+		
+		/*do
 		{
 			//borramos la pantalla
 			LCD.clear();
@@ -54,7 +56,7 @@ public class Sensores
 		        Button.waitForAnyPress(4000);
 	        }
 		}
-		while(mode != salir);
+		while(mode != salir);*/
     
     }
 	
@@ -92,6 +94,8 @@ public class Sensores
 	/*mision3_2*/
 	public static void mision3_2() throws InterruptedException
 	{
+		/*Para detectar el click en el sensor, haz que solo sume cuando el sensor se
+		 * vuelva a poner a 0. Es decir, haga la secuencia 1 y luego 0*/
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 	
 		int cont = 0;
@@ -99,9 +103,11 @@ public class Sensores
 		double distancia = 100;
 		while(!isPressed(touch)){}
 		cont++;
+		//System.out.println("cont: " + cont);
 		while((Button.readButtons()==0) || (cont==6)){
 			if(isPressed(touch))
 				cont++;
+				//System.out.println("cont: " + cont);
 		}
 	
 		mueveteYGira(touch, 360/cont, distancia);
@@ -150,6 +156,11 @@ public class Sensores
 	/*mision 4_1*/
 	public static void mision4_1()
 	{
+		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		pilot.setAcceleration(400);
+		pilot.setRotateSpeed(100.0);
+		pilot.setTravelSpeed(10.0);
+		
 		LCD.drawString("mision 4_1", 0, 0);
 		Button.waitForAnyPress(4000);
 		LCD.clear();
@@ -158,14 +169,21 @@ public class Sensores
 		//To get the Color
 		//float[] sample = new float[colSensor.sampleSize()];
 		float[] sample = new float[100];
+		pilot.forward();
 		while(but == 0)
 		{
-			colSensor.getRedMode().fetchSample(sample, 0);
+			colSensor.getRGBMode().fetchSample(sample, 0);
+			
 			LCD.drawString("R: "+sample[0], 0, 0);
+			System.out.println("R: "+sample[0]);
 			LCD.drawString("G: "+sample[1], 0, 1);
+			System.out.println("G: "+sample[1]);
 			LCD.drawString("B: "+sample[2], 0, 2);
+			System.out.println("B: "+sample[2]);
 			LCD.drawString("Color: "+colSensor.getColorID(), 0, 3);
+			System.out.println("Color: "+colSensor.getColorID());
 			LCD.drawString("Luz: "+colSensor.getFloodlight(), 0, 4);
+			System.out.println("Luz: "+colSensor.getFloodlight());
 			but = Button.readButtons();
 		}
 		colSensor.close();
@@ -230,35 +248,40 @@ public class Sensores
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
-		pilot.setTravelSpeed(720.0);
+		pilot.setTravelSpeed(100.0);
 		
 		
 	    LCD.clear();
 	    int cont =0;
 	    while (!Button.ESCAPE.isDown()) {
 	        LCD.drawString("SS: " + sonidos(sound), 0, 0);
-	        System.out.println("SS: " + sonidos(sound));
-	        if(sonidos(sound)>0.8){
+	        
+	        if(sonidos(sound)>0.85){
 	        	cont++;
+	        	System.out.println("SS: " + sonidos(sound));
+	        	Thread.sleep(200);
 	        }
 	        else{ //acciones
+	        	System.out.println("cont: " + cont);
 	        	switch(cont){
-	        		case 1: LCD.drawString("Moviendome indefinidamente", 0, 50);
+
+	        		case 1: LCD.drawString("Moviendome indefinidamente", 0, 50); 
+	        			System.out.println("muevo ind ");	
 	        				pilot.forward();
 	        			break;
-	        		case 2: pilot.rotateRight(); LCD.drawString("Hacia la derecha", 0, 50);
+	        		case 2: pilot.rotateRight(); 	
+	        				//pilot.forward();
+	        				LCD.drawString("Hacia la derecha", 0, 50);
+	        			System.out.println("hacia la derecha ");	
 	        			break;
-<<<<<<< HEAD
-	        		case 3: pilot.rotate(-360); LCD.drawString("Rotamos y paro", 0, 50);
-=======
-	        		case 3: pilot.rotate(-360); LCD.drawString("Rotamos y paro", 10, 0);
->>>>>>> 80d188b910eb6300003105d88af4266ae142f3ad
+	        		case 3: pilot.rotate(360); LCD.drawString("Rotamos y paro", 0, 50);
+	        			System.out.println("roto y paro ");	
 	        				pilot.stop();
 	        			break;
 	        	}
 	        	cont = 0;
 	        }
-	        Thread.sleep(20);
+	        
 	    }
 
 	    System.out.println("EXIT");
