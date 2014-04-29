@@ -223,19 +223,24 @@ public class Sensores
 
 	public static void mision5_1()
 	{
+		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		pilot.setAcceleration(400);
+		pilot.setRotateSpeed(100.0);
+		pilot.setTravelSpeed(100.0);
 		int but=0;
 		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
 		sonar.enable();
-		SampleProvider distanciaAnt = sonar.getDistanceMode();
+		SampleProvider distance = sonar.getDistanceMode();
+		float[] sample = new float[distance.sampleSize()];
+		SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
 		while(but == 0){
-			sonar.enable();
-			SampleProvider distanceAct = sonar.getDistanceMode();
-			//mueveteYGira(touch,0,distanciaAnt - distanceAct);
-			distanciaAnt = distanceAct;
-			sonar.disable();
+			distanceAct = distance.fetchSample(sample, 0);
+			pilot.travel(distanciant - distanceAct);
 			but = Button.readButtons();
 		}
+
+		sonar.disable();
 	}
 
 	public static void mision5_2()
