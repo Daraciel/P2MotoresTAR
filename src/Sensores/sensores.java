@@ -173,8 +173,25 @@ public class Sensores
 
 	public void mision6()
 	{
-		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
+		//NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
+
+		SoundSensor sound = new SoundSensor((ADSensorPort) SensorPort.S4);
+
+	    LCD.clear();
+
+	    while (!Button.ESCAPE.isDown()) {
+	        LCD.drawString("SS: " + sound.readValue(), 0, 0);
+	        System.out.println("SS: " + sound.readValue());
+	        Thread.sleep(20);
+	    }
+
+	    System.out.println("EXIT");
+	    System.exit(0);
 	}
+
+	public int readValue(SoundSensor port){
+    	return ((1023 - port.getShort()) * 100/ 1023);  
+   	}
 	
 	  public boolean isPressed(EV3TouchSensor sensor) 
 	  {
