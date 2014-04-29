@@ -220,12 +220,17 @@ public class Sensores
 	        }
 	        else{ //acciones
 	        	switch(cont){
-	        		case 1: LCD.drawString("Moviendome indefinidamente", 10, 0);
+	        		case 1: LCD.drawString("Moviendome indefinidamente", 10, 0); 
+	        			System.out.println("muevo ind ");	
 	        				pilot.forward();
 	        			break;
-	        		case 2: pilot.rotateRight(); LCD.drawString("Hacia la derecha", 10, 0);
+	        		case 2: pilot.rotateRight(); 	
+	        				pilot.forward();
+	        				LCD.drawString("Hacia la derecha", 10, 0);
+	        			System.out.println("hacia la derecha ");	
 	        			break;
 	        		case 3: pilot.rotate(-360); LCD.drawString("Rotamos y paro", 10, 0);
+	        			System.out.println("roto y paro ");	
 	        				pilot.Stop();
 	        			break;
 	        	}
