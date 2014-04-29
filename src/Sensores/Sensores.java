@@ -90,21 +90,37 @@ public class Sensores
 /*end 3_1*/
 
 	/*mision3_2*/
-	public static void mision3_2()
+	public static void mision3_2() throws InterruptedException
 	{
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 	
 		int cont = 0;
 		int delay = 3000;
-		double distancia =0;
+		double distancia = 100;
 		while(!isPressed(touch)){}
 		cont++;
-		while(Button.readButtons()==0){
+		while((Button.readButtons()==0) || (cont==6)){
 			if(isPressed(touch))
 				cont++;
 		}
 	
-		while(mueveteYGira(touch, 360/cont, distancia));
+		mueveteYGira(touch, 360/cont, distancia);
+	}
+	
+	private static boolean GoUntilCrash(DifferentialPilot p, double d, EV3TouchSensor touch)
+	{
+		boolean ok = true;
+		p.travel(d);
+		 while(p.isMoving())
+		 {
+			 if(isPressed(touch))
+			 {
+				 ok=false;
+				 return ok;
+			 }
+		 }
+		
+		return ok;
 	}
 	
 	private static boolean mueveteYGira(EV3TouchSensor touch, double giro, double distancia)
@@ -113,18 +129,21 @@ public class Sensores
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(720.0);
+		boolean choque = false;
 		//mueve distancia
-		pilot.travel(distancia);
-		if(isPressed(touch))
+		while(!choque)
 		{
-			return false;
+			choque = GoUntilCrash(pilot, distancia, touch);
+			if(!choque)
+			{
+				pilot.rotate(giro);
+			}
+			/*if(isPressed(touch))
+			{
+				return false;
+			}*/
 		}
-		pilot.rotate(giro);
-		if(isPressed(touch))
-		{
-			return false;
-		}
-		return true;
+		return choque;
 	}
 	/*end 3_2 */
 
@@ -231,7 +250,7 @@ public class Sensores
 	        			break;
 	        		case 3: pilot.rotate(-360); LCD.drawString("Rotamos y paro", 10, 0);
 	        			System.out.println("roto y paro ");	
-	        				pilot.Stop();
+	        				pilot.stop();
 	        			break;
 	        	}
 	        	cont = 0;
