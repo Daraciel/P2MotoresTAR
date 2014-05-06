@@ -6,6 +6,7 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.port.UARTPort;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3IRSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.NXTSoundSensor;
@@ -234,8 +235,8 @@ public class Sensores
 		pilot.setTravelSpeed(100.0);
 		int but=0;
 		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
-		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
-		sonar.enable();
+		EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
+		//sonar.enable();
 		SampleProvider distance = sonar.getDistanceMode();
 
 		/*float[] sample = new float[distance.sampleSize()];
@@ -264,8 +265,8 @@ public class Sensores
 			//pilot.travel(distanciaAnt - distanceAct);
 			but = Button.readButtons();
 		}
-
-		sonar.disable();
+		pilot.stop();
+		//sonar.disable();
 	}
 
 	public static void mision5_2()
