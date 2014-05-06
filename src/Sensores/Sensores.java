@@ -238,13 +238,30 @@ public class Sensores
 		sonar.enable();
 		SampleProvider distance = sonar.getDistanceMode();
 
-		float[] sample = new float[distance.sampleSize()];
+		/*float[] sample = new float[distance.sampleSize()];
 		//SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
-		float distanciaAnt = sample[0];
+		float distanciaAnt = sample[0];*/
+		float[] sample = new float[distance.sampleSize()];
 		while(but == 0){
 			distance.fetchSample(sample, 0);
 			float distanceAct = sample[0];
-			pilot.travel(distanciaAnt - distanceAct);
+			
+			LCD.drawString("Distancia: " + distanceAct, 0, 0);
+			
+			if(distanceAct > 0.5)
+			{
+				pilot.forward();
+			}
+			else if(distanceAct < 0.5)
+			{
+				pilot.backward();
+			}
+			else
+			{
+				pilot.stop();
+			}
+			
+			//pilot.travel(distanciaAnt - distanceAct);
 			but = Button.readButtons();
 		}
 
