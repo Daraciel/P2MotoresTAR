@@ -25,7 +25,7 @@ public class Sensores
     {
 		int mode = 0;
 		int resul = 0;
-		int salir = menu.length;
+		int salir = menu.length-1;
 		
 		do
 		{
