@@ -99,14 +99,19 @@ public class Sensores
 	
 		int cont = 0;
 		int delay = 3000;
-		double distancia = 100;
-		while(!isPressed(touch)){}
-		cont++;
-		//System.out.println("cont: " + cont);
-		while((Button.readButtons()==0) || (cont==6)){
+		double distancia = 500;
+		//while(!isPressed(touch)){}
+		System.out.println("cont: " + cont);
+		LCD.drawString("Contador: 0", 0, 0);
+		while((Button.readButtons()==0) && (cont<6))
+		{
 			if(isPressed(touch))
+			{
+				while(isPressed(touch)){}
 				cont++;
-				//System.out.println("cont: " + cont);
+				System.out.println("cont: " + cont);
+				LCD.drawString("Contador: "+cont, 0, 0);
+			}
 		}
 	
 		mueveteYGira(touch, 360/cont, distancia);
@@ -114,16 +119,17 @@ public class Sensores
 	
 	private static boolean GoUntilCrash(DifferentialPilot p, double d, EV3TouchSensor touch)
 	{
-		boolean ok = true;
-		p.travel(d);
-		 while(p.isMoving())
-		 {
-			 if(isPressed(touch))
-			 {
-				 ok=false;
-				 return ok;
-			 }
-		 }
+		boolean ok = false;
+		p.travel(d, true);
+		while(p.isMoving())
+		{
+			if(isPressed(touch))
+			{
+				ok=true;
+				p.stop();
+				return ok;
+			}
+		}
 		
 		return ok;
 	}
@@ -231,6 +237,7 @@ public class Sensores
 		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
 		sonar.enable();
 		SampleProvider distance = sonar.getDistanceMode();
+
 		float[] sample = new float[distance.sampleSize()];
 		//SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
 		float distanciaAnt = sample[0];
