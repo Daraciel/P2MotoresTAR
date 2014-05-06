@@ -3,7 +3,9 @@ import javax.sound.sampled.Port;
 
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
+import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
+import lejos.hardware.port.TachoMotorPort;
 import lejos.hardware.port.UARTPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3IRSensor;
@@ -11,8 +13,11 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.NXTSoundSensor;
 import lejos.hardware.sensor.SensorConstants;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.motor.Motor;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.TextMenu;
 
@@ -21,6 +26,7 @@ public class Sensores
 {
 
 	private static String[] menu ={"Mision 3_1","Mision 3_2","Mision 4_1","Mision 4_2","Mision 5_1","Mision 5_2","Mision 6","Salir"};
+	private static float umbral_sensor = 50f;
 	
 	public static void main(String[] args) throws InterruptedException
     {
@@ -271,22 +277,64 @@ public class Sensores
 
 	public static void mision5_2()
 	{
-	
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
-		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
-		sonar.enable();
-		while(!isPressed(touch)){
-			sonar.enable();/*
-			if(sonar.getDistanceMode()<20)
+		EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
+		EV3MediumRegulatedMotor serv = new EV3MediumRegulatedMotor(MotorPort.D);
+			
+		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		pilot.setAcceleration(400);
+		pilot.setRotateSpeed(100.0);
+		pilot.setTravelSpeed(100.0);
+		int but=0;
+		
+		SampleProvider distance_sample = sonar.getDistanceMode();
+		float[] sample = new float[distance_sample.sampleSize()];
+		
+		pilot.forward();
+		while(but == 0){
+			
+			distance_sample.fetchSample(sample, 0);
+			float distance = sample[0];
+			
+			if(distance < umbral_sensor)
 			{
-				mueveteYGira(touch, 90, 0);
+				pilot.stop();
+				
+				serv.rotateTo(90); //Sensor mira a la derecha
+				distance_sample.fetchSample(sample, 0);
+				float distance_right = sample[0];
+				
+				if(distance_right < umbral_sensor)
+				{
+					distance_right = 0;
+				}
+				
+				serv.rotateTo(-90);//Sensor mira a la izquierda
+				distance_sample.fetchSample(sample, 0);
+				float distance_left = sample[0];
+				
+				if(distance_left < umbral_sensor)
+				{
+					distance_left = 0;
+				}
+				
+				
+				serv.rotateTo(0); //Sensor vuelve a posición inicial
+				
+				if(distance_right >= distance_left)
+				{
+					pilot.rotate(90);
+				}
+				else
+				{
+					pilot.rotate(-90);
+				}
+				
+				pilot.forward();
 			}
-			else{
-				mueveteYGira(touch, 0, 20);
-			}*/
-	
-			sonar.disable();
+			
+			but = Button.readButtons();
 		}
+		pilot.stop();
 	}
 
 	public static void mision6() throws InterruptedException
