@@ -237,13 +237,16 @@ public class Sensores
 		EV3UltrasonicSensor sonar = new EV3UltrasonicSensor(SensorPort.S3.open(UARTPort.class));
 		sonar.enable();
 		SampleProvider distance = sonar.getDistanceMode();
-		float[] sample = new float[distance.sampleSize()];/*
-		SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
+
+		float[] sample = new float[distance.sampleSize()];
+		//SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
+		float distanciaAnt = sample[0];
 		while(but == 0){
-			distanceAct = distance.fetchSample(sample, 0);
-			pilot.travel(distanciant - distanceAct);
+			distance.fetchSample(sample, 0);
+			float distanceAct = sample[0];
+			pilot.travel(distanciaAnt - distanceAct);
 			but = Button.readButtons();
-		}*/
+		}
 
 		sonar.disable();
 	}
