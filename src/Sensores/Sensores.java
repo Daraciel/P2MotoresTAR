@@ -232,10 +232,12 @@ public class Sensores
 		sonar.enable();
 		SampleProvider distance = sonar.getDistanceMode();
 		float[] sample = new float[distance.sampleSize()];
-		SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
+		//SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
+		float distanciaAnt = sample[0];
 		while(but == 0){
-			distanceAct = distance.fetchSample(sample, 0);
-			pilot.travel(distanciant - distanceAct);
+			distance.fetchSample(sample, 0);
+			float distanceAct = sample[0];
+			pilot.travel(distanciaAnt - distanceAct);
 			but = Button.readButtons();
 		}
 
