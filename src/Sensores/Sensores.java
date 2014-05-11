@@ -1,6 +1,7 @@
 package Sensores;
 import javax.sound.sampled.Port;
 
+import Rober.Robot;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.MotorPort;
@@ -25,54 +26,84 @@ import lejos.utility.TextMenu;
 public class Sensores 
 {
 
-	private static String[] menu ={"Mision 3_1","Mision 3_2","Mision 4_1","Mision 4_2","Mision 5_1","Mision 5_2","Mision 6","Salir"};
-	private static float umbral_sensor = 50f;
+	private static boolean debug=false;
+	private static String[] menu ={"Mision 3_1","Mision 3_2","Mision 4_1","Mision 4_2","Mision 5_1","Mision 5_2","Mision 6","Debug Mission","Salir"};
+	private static float umbral_sensor = 60f;
+	private static float umbral_sensor_min = 50f;
+	private static float umbral_sensor_max = 60f;
+	private Robot rober;
+
+	/*		M O T O R E S		*//*
+	private DifferentialPilot pilot;
+	private EV3MediumRegulatedMotor headmotor;*/
+	
+	/*		S E N S O R E S		*//*
+	private EV3IRSensor sonar;
+	private EV3TouchSensor touch;
+	private EV3ColorSensor color;
+	private NXTSoundSensor microfono;*/
+	
+	/*		C O S A S			*/
+	//distancia entre ruedas
+	static double axisDistance=159.0;
+	 //diametro de la rueda
+	static double wheelRadius=42.0;
+	
 	
 	public static void main(String[] args) throws InterruptedException
     {
 		int mode = 0;
 		int resul = 0;
+
 		int salir = menu.length-1;
-		
-		do
+		if(debug)
 		{
-			//borramos la pantalla
-			LCD.clear();
-			//creamos el nuevo menu con el array de stirings
-	        TextMenu modeMenu = new TextMenu(menu, 1, "Misiones");
-	        //ponemos el modo a selección, para que el usuario pueda seleccionar
-	        mode = modeMenu.select();
-	        //borramos la pantalla, ya que ha seleccionado algo el usuario
-	        LCD.clear();
-	        
-	        //Dependiendo de lo seleccionado, ejecutamos uno u otro
-	        switch(mode)
-	        {
-	        	case 0: LCD.drawString("Ejecutando mision\n 3_1...", 0, 0); mision3_1(); break;
-	        	case 1: LCD.drawString("Ejecutando mision\n 3_2...", 0, 0); mision3_2(); break;
-	        	case 2: LCD.drawString("Ejecutando mision\n 4_1...", 0, 0); mision4_1(); break;
-	        	case 3: LCD.drawString("Ejecutando mision\n 4_2...", 0, 0); mision4_2(); break;
-	        	case 4: LCD.drawString("Ejecutando mision\n 5_1...", 0, 0); mision5_1(); break;
-	        	case 5: LCD.drawString("Ejecutando mision\n 5_2...", 0, 0); mision5_2(); break;
-	        	case 6: LCD.drawString("Ejecutando mision\n 6...", 0, 0); mision6(); break;
-	        }
-	        if(mode!=salir)
-	        {
-		        LCD.drawString("Presiona un boton para continuar",0,7);
-		        Button.waitForAnyPress(4000);
-	        }
+			System.out.println("Cosas");
+			mision3_2();
 		}
-		while(mode != salir);
+		else
+		{
+			do
+			{
+				//borramos la pantalla
+				LCD.clear();
+				//creamos el nuevo menu con el array de stirings
+		        TextMenu modeMenu = new TextMenu(menu, 1, "Misiones");
+		        //ponemos el modo a selección, para que el usuario pueda seleccionar
+		        mode = modeMenu.select();
+		        //borramos la pantalla, ya que ha seleccionado algo el usuario
+		        LCD.clear();
+		        
+		        //Dependiendo de lo seleccionado, ejecutamos uno u otro
+		        switch(mode)
+		        {
+		        	case 0: LCD.drawString("Ejecutando 3_1...", 0, 0); mision3_1(); break;
+		        	case 1: LCD.drawString("Ejecutando 3_2...", 0, 0); mision3_2(); break;
+		        	case 2: LCD.drawString("Ejecutando 4_1...", 0, 0); mision4_1(); break;
+		        	case 3: LCD.drawString("Ejecutando 4_2...", 0, 0); mision4_2(); break;
+		        	case 4: LCD.drawString("Ejecutando 5_1...", 0, 0); mision5_1(); break;
+		        	case 5: LCD.drawString("Ejecutando 5_2...", 0, 0); mision5_2(); break;
+		        	case 6: LCD.drawString("Ejecutando 6...", 0, 0); mision6(); break;
+		        	case 7: LCD.drawString("Ejecutando Debug...", 0, 0); debugmission(); break;
+		        }
+		        if(mode!=salir)
+		        {
+			        LCD.drawString("Presiona un boton para continuar",0,7);
+			        Button.waitForAnyPress(4000);
+		        }
+			}
+			while(mode != salir);
+		}
+		
     
     }
 	
 	
 	
-	
-	//distancia entre ruedas
-	private static double axisDistance=159.0;
-	//diametro de la rueda
-	private static double wheelRadius=42.0;
+
+
+
+
 	
 /*mision3_1*/
 	
@@ -104,21 +135,43 @@ public class Sensores
 		 * vuelva a poner a 0. Es decir, haga la secuencia 1 y luego 0*/
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 	
-		int cont = 0;
+		int cont = 2;
 		int delay = 3000;
 		double distancia = 500;
+		double max_dist=1500;
+		double min_dist=200;
 		//while(!isPressed(touch)){}
-		System.out.println("cont: " + cont);
-		LCD.drawString("Contador: 0", 0, 0);
-		while((Button.readButtons()==0) && (cont<6))
+		LCD.clear();
+		LCD.drawString("Giros: "+cont, 0, 0);
+		LCD.drawString("Distancia: "+distancia, 0, 1);
+		while(Button.readButtons()!=Button.ID_ENTER)
 		{
+			if(distancia<min_dist)
+				distancia = min_dist;
+			else if(distancia>max_dist)
+				distancia = max_dist;
 			if(isPressed(touch))
 			{
 				while(isPressed(touch)){}
-				cont++;
-				System.out.println("cont: " + cont);
-				LCD.drawString("Contador: "+cont, 0, 0);
+				if(cont==6)
+					cont = 2;
+				else
+					cont++;
 			}
+			else if(Button.readButtons()==Button.ID_RIGHT)
+			{
+				if(distancia<max_dist)
+					distancia+=5;
+			}
+			else if(Button.readButtons()==Button.ID_LEFT)
+			{
+				if(distancia>min_dist)
+					distancia-=5;
+			}
+			System.out.println("Giros: " + cont);
+			System.out.println("Distancia: " + distancia);
+			LCD.drawString(""+cont, 7, 0);
+			LCD.drawString(""+distancia, 11, 1);
 		}
 	
 		mueveteYGira(touch, 360/cont, distancia);
@@ -249,17 +302,18 @@ public class Sensores
 		//SampleProvider distanciaAnt = distance.fetchSample(sample, 0);
 		float distanciaAnt = sample[0];*/
 		float[] sample = new float[distance.sampleSize()];
+		float distanceAct;
 		while(but == 0){
 			distance.fetchSample(sample, 0);
-			float distanceAct = sample[0];
+			distanceAct = sample[0];
 			
 			LCD.drawString("Distancia: " + distanceAct, 0, 0);
 			
-			if(distanceAct > 0.5)
+			if(distanceAct > umbral_sensor)
 			{
 				pilot.forward();
 			}
-			else if(distanceAct < 0.5)
+			else if(distanceAct < umbral_sensor)
 			{
 				pilot.backward();
 			}
@@ -277,64 +331,99 @@ public class Sensores
 
 	public static void mision5_2()
 	{
-		EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
-		EV3MediumRegulatedMotor serv = new EV3MediumRegulatedMotor(MotorPort.D);
-			
+		
+
+		
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
-		pilot.setTravelSpeed(100.0);
-		int but=0;
+		pilot.setTravelSpeed(180.0);
+
+		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 		
+		//pilot.travel(10);
+		/*
+		EV3MediumRegulatedMotor serv = new EV3MediumRegulatedMotor(MotorPort.D);
+		
+
+		serv.rotateTo(90);
+
+		serv.rotateTo(0);
+		serv.rotateTo(-90);*/
+		/*
+
+		
+		*/
+
+		EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
+
 		SampleProvider distance_sample = sonar.getDistanceMode();
 		float[] sample = new float[distance_sample.sampleSize()];
 		
+
+		int but=0;
+		
+		
 		pilot.forward();
-		while(but == 0){
-			
+		float distance=0;
+		float lastdistance=0;
+		
+		while(but == 0)
+		{
+
+			lastdistance = distance;
 			distance_sample.fetchSample(sample, 0);
-			float distance = sample[0];
+			distance = sample[0];
 			
-			if(distance < umbral_sensor)
+			if(distance < umbral_sensor_min)
 			{
 				pilot.stop();
-				
-				serv.rotateTo(90); //Sensor mira a la derecha
-				distance_sample.fetchSample(sample, 0);
-				float distance_right = sample[0];
-				
-				if(distance_right < umbral_sensor)
+				pilot.rotate(15);
+				pilot.travel(100);
+				pilot.forward();
+				do
 				{
-					distance_right = 0;
-				}
-				
-				serv.rotateTo(-90);//Sensor mira a la izquierda
-				distance_sample.fetchSample(sample, 0);
-				float distance_left = sample[0];
-				
-				if(distance_left < umbral_sensor)
-				{
-					distance_left = 0;
-				}
-				
-				
-				serv.rotateTo(0); //Sensor vuelve a posici�n inicial
-				
-				if(distance_right >= distance_left)
-				{
-					pilot.rotate(90);
-				}
-				else
-				{
-					pilot.rotate(-90);
-				}
-				
+
+					lastdistance = distance;
+					distance_sample.fetchSample(sample, 0);
+					distance = sample[0];
+					if(isPressed(touch))
+					{
+						pilot.stop();
+						pilot.travel(-50);
+						pilot.rotate(90);
+						pilot.forward();
+					}
+					else if (lastdistance > distance)
+					{
+
+						pilot.stop();
+						pilot.rotate(15);
+						pilot.travel(100);
+						pilot.forward();
+					}
+					
+				}while(distance<umbral_sensor_min+3);
+				pilot.stop();
+				pilot.rotate(-15);
 				pilot.forward();
 			}
-			
+			else
+			{
+				if(isPressed(touch))
+				{
+					pilot.stop();
+					pilot.travel(-50);
+					pilot.rotate(90);
+					pilot.forward();
+				}
+			}
 			but = Button.readButtons();
 		}
-		pilot.stop();
+		
+		//pilot.stop();
+		//sonar.close();
+		//serv.close();
 	}
 
 	public static void mision6() throws InterruptedException
@@ -389,16 +478,29 @@ public class Sensores
 		return sample[0];
    	}
 	
-	  public static boolean isPressed(EV3TouchSensor sensor) 
-	  {
+	public static boolean isPressed(EV3TouchSensor sensor) 
+	{
 		  
-		  float[] sample = new float[sensor.sampleSize()];
-		  sensor.fetchSample(sample, 0);
-		  if (sample[0] == 0)
-			  return false;
-		  return true;
-	  }
+		float[] sample = new float[sensor.sampleSize()];
+		sensor.fetchSample(sample, 0);
+		if (sample[0] == 0)
+			return false;
+		return true;
+	}
+	
 
+	
+	private static void debugmission() 
+	{
+		EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
+		EV3MediumRegulatedMotor serv = new EV3MediumRegulatedMotor(MotorPort.D);
+		LCD.clear();
+		LCD.drawString("headposition: "+serv.getPosition(), 0, 0);
+		LCD.drawString("headposition: "+serv.getTachoCount(), 0, 1);
+		
+	}
+	  
+	  
 }
 
 
