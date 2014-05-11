@@ -14,6 +14,7 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.NXTSoundSensor;
 import lejos.hardware.sensor.SensorConstants;
+import lejos.hardware.sensor.SensorMode;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.motor.Motor;
@@ -25,6 +26,24 @@ import lejos.utility.TextMenu;
 
 public class Sensores 
 {
+	
+	/*	C O L O R E S	*/
+	public static final int RED = 0;
+	public static final int GREEN = 1;
+	public static final int BLUE = 2;
+	public static final int YELLOW = 3;
+	public static final int MAGENTA = 4;
+	public static final int ORANGE = 5;
+	public static final int WHITE = 6;
+	public static final int BLACK = 7;
+	public static final int PINK = 8;
+	public static final int GRAY = 9;
+	public static final int LIGHT_GRAY = 10;
+	public static final int DARK_GRAY = 11;
+	public static final int CYAN = 12;
+	public static final int BROWN = 13;
+	public static final int NONE = -1;
+	/*********************/
 
 	private static boolean debug=false;
 	private static String[] menu ={"Mision 3_1","Mision 3_2","Mision 4_1","Mision 4_2","Mision 5_1","Mision 5_2","Mision 6","Debug Mission","Salir"};
@@ -33,15 +52,15 @@ public class Sensores
 	private static float umbral_sensor_max = 60f;
 	private Robot rober;
 
-	/*		M O T O R E S		*//*
-	private DifferentialPilot pilot;
-	private EV3MediumRegulatedMotor headmotor;*/
+	/*		M O T O R E S		*/
+	private static DifferentialPilot pilot;
+	private static EV3MediumRegulatedMotor headmotor;
 	
-	/*		S E N S O R E S		*//*
-	private EV3IRSensor sonar;
-	private EV3TouchSensor touch;
-	private EV3ColorSensor color;
-	private NXTSoundSensor microfono;*/
+	/*		S E N S O R E S		*/
+	private static EV3IRSensor sonar;
+	private static EV3TouchSensor touch;
+	private static EV3ColorSensor colSensor;
+	private static NXTSoundSensor sound;
 	
 	/*		C O S A S			*/
 	//distancia entre ruedas
@@ -54,12 +73,21 @@ public class Sensores
     {
 		int mode = 0;
 		int resul = 0;
+		pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		
 
+		sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
+		touch = new EV3TouchSensor(SensorPort.S2);
+		colSensor = new EV3ColorSensor(SensorPort.S1);
+		sound = new NXTSoundSensor(SensorPort.S4);
+		
+		
 		int salir = menu.length-1;
 		if(debug)
 		{
 			System.out.println("Cosas");
-			mision3_2();
+			Thread.sleep(3000);
+			mision4_1();
 		}
 		else
 		{
@@ -110,12 +138,13 @@ public class Sensores
 	
 	
 	public static void mision3_1()
-	{
+	{/*
 		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		*/
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
-		pilot.setTravelSpeed(180.0);
+		pilot.setTravelSpeed(1500.0);
 
 		pilot.forward();
 		while(!isPressed(touch))
@@ -133,7 +162,7 @@ public class Sensores
 	{
 		/*Para detectar el click en el sensor, haz que solo sume cuando el sensor se
 		 * vuelva a poner a 0. Es decir, haga la secuencia 1 y luego 0*/
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
+		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 	
 		int cont = 2;
 		int delay = 3000;
@@ -142,8 +171,8 @@ public class Sensores
 		double min_dist=200;
 		//while(!isPressed(touch)){}
 		LCD.clear();
-		LCD.drawString("Giros: "+cont, 0, 0);
-		LCD.drawString("Distancia: "+distancia, 0, 1);
+		LCD.drawString("Giros: "+cont, 0, 1);
+		LCD.drawString("Distancia: "+distancia, 0, 2);
 		while(Button.readButtons()!=Button.ID_ENTER)
 		{
 			if(distancia<min_dist)
@@ -167,11 +196,11 @@ public class Sensores
 			{
 				if(distancia>min_dist)
 					distancia-=5;
-			}
+			}/*
 			System.out.println("Giros: " + cont);
-			System.out.println("Distancia: " + distancia);
-			LCD.drawString(""+cont, 7, 0);
-			LCD.drawString(""+distancia, 11, 1);
+			System.out.println("Distancia: " + distancia);*/
+			LCD.drawString(""+cont, 7, 1);
+			LCD.drawString(""+distancia, 11, 2);
 		}
 	
 		mueveteYGira(touch, 360/cont, distancia);
@@ -196,7 +225,7 @@ public class Sensores
 	
 	private static boolean mueveteYGira(EV3TouchSensor touch, double giro, double distancia)
 	{
-		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		//DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(720.0);
@@ -221,7 +250,7 @@ public class Sensores
 	/*mision 4_1*/
 	public static void mision4_1()
 	{
-		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		//DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(10.0);
@@ -230,7 +259,7 @@ public class Sensores
 		Button.waitForAnyPress(4000);
 		LCD.clear();
 		int but=0;
-		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S1);
+		//EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S1);
 		//To get the Color
 		//float[] sample = new float[colSensor.sampleSize()];
 		float[] sample = new float[100];
@@ -259,26 +288,46 @@ public class Sensores
 /*mision 4_2*/
 	public static void mision4_2()
 	{ //si detecta un choque debe salir
-	
-		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		final SensorMode mode = colSensor.getColorIDMode();
+		//DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
-		pilot.setTravelSpeed(10.0);
+		pilot.setTravelSpeed(100.0);
 		float[] sample = new float[100];
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
-		EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S1);
+		int colorId = colSensor.getColorID();
+		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
+		//EV3ColorSensor colSensor = new EV3ColorSensor(SensorPort.S1);
+		System.out.println("Amos pa alla");
+		pilot.forward();
 		while(!isPressed(touch))
-		{
+		{	/*
 			colSensor.getRGBMode().fetchSample(sample, 0);
+			System.out.println("R: "+sample[0]);
+			System.out.println("G: "+sample[1]);
+			System.out.println("B: "+sample[2]);
 			if(sample[0]>0.1 && sample[1]>0.1 && sample[2]>0.1)
 			{
+				pilot.stop();
 				pilot.rotate(180);
 				System.out.println("Detectado blanco. Girando 180∫...");
+				pilot.forward();
 			}
+			
+			*/
+			colorId = colSensor.getColorID();
+			if(colorId == WHITE)
+			{
+				System.out.println("Detectado blanco. Girando 180∫...");
+				pilot.stop();
+				pilot.rotate(180);
+				pilot.forward();
+			}
+			
+			/*
 			else
 			{
 				pilot.forward(); //se mover√° una peque√±a distancia para ir comprobando la luz
-			}
+			}*/
 		}
 		
 		pilot.stop();
@@ -288,13 +337,13 @@ public class Sensores
 
 	public static void mision5_1()
 	{
-		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		//DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(100.0);
 		int but=0;
 		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
-		EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
+		//EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
 		//sonar.enable();
 		SampleProvider distance = sonar.getDistanceMode();
 
@@ -303,7 +352,8 @@ public class Sensores
 		float distanciaAnt = sample[0];*/
 		float[] sample = new float[distance.sampleSize()];
 		float distanceAct;
-		while(but == 0){
+		while(but == 0)
+		{
 			distance.fetchSample(sample, 0);
 			distanceAct = sample[0];
 			
@@ -332,30 +382,15 @@ public class Sensores
 	public static void mision5_2()
 	{
 		
-
-		
-		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		//DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(180.0);
 
-		EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
-		
-		//pilot.travel(10);
-		/*
-		EV3MediumRegulatedMotor serv = new EV3MediumRegulatedMotor(MotorPort.D);
+		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
 		
 
-		serv.rotateTo(90);
-
-		serv.rotateTo(0);
-		serv.rotateTo(-90);*/
-		/*
-
-		
-		*/
-
-		EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
+		//EV3IRSensor sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
 
 		SampleProvider distance_sample = sonar.getDistanceMode();
 		float[] sample = new float[distance_sample.sampleSize()];
@@ -428,8 +463,8 @@ public class Sensores
 
 	public static void mision6() throws InterruptedException
 	{
-		NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
-		DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
+		//NXTSoundSensor sound = new NXTSoundSensor(SensorPort.S4);
+		//DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
 		pilot.setTravelSpeed(100.0);
@@ -450,16 +485,17 @@ public class Sensores
 	        	switch(cont){
 
 	        		case 1: LCD.drawString("Moviendome indefinidamente", 0, 50); 
-	        			System.out.println("muevo ind ");	
+	        				System.out.println("muevo ind ");	
 	        				pilot.forward();
 	        			break;
 	        		case 2: pilot.rotateRight(); 	
 	        				//pilot.forward();
 	        				LCD.drawString("Hacia la derecha", 0, 50);
-	        			System.out.println("hacia la derecha ");	
+	        				System.out.println("hacia la derecha ");	
 	        			break;
-	        		case 3: pilot.rotate(360); LCD.drawString("Rotamos y paro", 0, 50);
-	        			System.out.println("roto y paro ");	
+	        		case 3: pilot.rotate(360); 
+	        				LCD.drawString("Rotamos y paro", 0, 50);
+	        				System.out.println("roto y paro ");	
 	        				pilot.stop();
 	        			break;
 	        	}
@@ -472,7 +508,8 @@ public class Sensores
 	    System.exit(0);
 	}
 	
-	public static float sonidos(NXTSoundSensor port){
+	public static float sonidos(NXTSoundSensor port)
+	{
 		float[] sample = new float[port.sampleSize()];
 		port.fetchSample(sample,0);
 		return sample[0];
