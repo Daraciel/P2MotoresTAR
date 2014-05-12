@@ -45,7 +45,7 @@ public class Sensores
 	public static final int NONE = -1;
 	/*********************/
 
-	private static boolean debug=false;
+	private static boolean debug=true;
 	private static String[] menu ={"Mision 3_1","Mision 3_2","Mision 4_1","Mision 4_2","Mision 5_1","Mision 5_2","Mision 6","Debug Mission","Salir"};
 	private static float umbral_sensor = 60f;
 	private static float umbral_sensor_min = 50f;
@@ -80,14 +80,18 @@ public class Sensores
 		touch = new EV3TouchSensor(SensorPort.S2);
 		colSensor = new EV3ColorSensor(SensorPort.S1);
 		sound = new NXTSoundSensor(SensorPort.S4);
-		
+		if(args.length>0)
+		{
+			if(args[0]=="-d")
+				debug=true;
+		}
 		
 		int salir = menu.length-1;
 		if(debug)
 		{
-			System.out.println("Cosas");
+			System.out.println("Debug mode");
 			Thread.sleep(3000);
-			mision4_1();
+			mision4_2();
 		}
 		else
 		{
@@ -292,7 +296,7 @@ public class Sensores
 		//DifferentialPilot pilot = new DifferentialPilot(wheelRadius,axisDistance,Motor.C,Motor.B);
 		pilot.setAcceleration(400);
 		pilot.setRotateSpeed(100.0);
-		pilot.setTravelSpeed(100.0);
+		pilot.setTravelSpeed(10.0);
 		float[] sample = new float[100];
 		int colorId = colSensor.getColorID();
 		//EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S2);
@@ -300,20 +304,23 @@ public class Sensores
 		System.out.println("Amos pa alla");
 		pilot.forward();
 		while(!isPressed(touch))
-		{	/*
+		{	
 			colSensor.getRGBMode().fetchSample(sample, 0);
 			System.out.println("R: "+sample[0]);
 			System.out.println("G: "+sample[1]);
-			System.out.println("B: "+sample[2]);
-			if(sample[0]>0.1 && sample[1]>0.1 && sample[2]>0.1)
+			System.out.println("B: "+sample[2]);/*
+			if( (sample[0]<0.03 && sample[1]<0.03 && sample[2]<0.03) ||
+				(sample[0]>0.1 && sample[1]>0.1 && sample[2]>0.1))*/
+			if((sample[0]>0.1) && (sample[1]>0.1) && (sample[2]>0.1))
 			{
+				System.out.println("Detectado final. Girando 180º...");
 				pilot.stop();
 				pilot.rotate(180);
-				System.out.println("Detectado blanco. Girando 180º...");
 				pilot.forward();
 			}
 			
-			*/
+			
+			/*
 			colorId = colSensor.getColorID();
 			if(colorId == WHITE)
 			{
@@ -322,7 +329,7 @@ public class Sensores
 				pilot.rotate(180);
 				pilot.forward();
 			}
-			
+			*/
 			/*
 			else
 			{
