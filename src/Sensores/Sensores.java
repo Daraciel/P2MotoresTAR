@@ -45,7 +45,7 @@ public class Sensores
 	public static final int NONE = -1;
 	/*********************/
 
-	private static boolean debug=true;
+	private static boolean debug=false;
 	private static String[] menu ={"Mision 3_1","Mision 3_2","Mision 4_1","Mision 4_2","Mision 5_1","Mision 5_2","Mision 6","Debug Mission","Salir"};
 	private static float umbral_sensor = 60f;
 	private static float umbral_sensor_min = 50f;
