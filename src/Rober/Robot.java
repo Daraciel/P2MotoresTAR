@@ -35,6 +35,7 @@ public class Robot {
 		sonar = new EV3IRSensor(SensorPort.S3.open(UARTPort.class));
 		ostiometro = new EV3TouchSensor(SensorPort.S2);
 		color = new EV3ColorSensor(SensorPort.S1);
+		
 		//microfono = new NXTSoundSensor(SensorPort.S4);
 	}
 	

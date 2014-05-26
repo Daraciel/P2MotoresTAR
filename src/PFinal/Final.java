@@ -31,8 +31,8 @@ public class Final
 	private static boolean debug=false;
 	private final static float radiotierra=11.0f;
 	private static float viaje=11.0f;
-	private static float umbral_sensor_min = 50f;
-	private static float umbral_sensor_max = 55f;
+	private static float umbral_sensor_min = 65f;
+	private static float umbral_sensor_max = 75f;
 	private static float umbral_sensor = umbral_sensor_max - umbral_sensor_min;
 	private static Robot rober;
 	/*	C O L O R E S	*/
@@ -107,8 +107,9 @@ public class Final
 			System.out.println("radiogiro: " + radiogiro);
 			viaje = (float) (2.0 * Math.PI * radiogiro);
 			System.out.println("viaje: " + viaje);
-			rober.pilot.travelArc(-radiogiro, viaje);
-			rober.pilot.rotate(90);
+			//rober.pilot.travelArc(-radiogiro, viaje);
+			rober.pilot.arc(-radiogiro, -360);
+			rober.pilot.rotate(110);
 			rober.pilot.forward();
 
 			colorActual = rober.color.getColorID();
@@ -117,160 +118,161 @@ public class Final
 				colorAnterior = colorActual;
 				colorActual = rober.color.getColorID();
 			}while(colorActual==SUELO);
-			
-			rober.pilot.setTravelSpeed(120);
+			rober.pilot.stop();
+			rober.pilot.setTravelSpeed(70);
+			rober.pilot.forward();
 			
 			do
 			{
-				switch(colorAnterior)
-				{
-					case SUELO:
-						switch(colorActual)
-						{
+					switch(colorAnterior)
+					{
 						case SUELO:
-							//GG
-							break;
+							switch(colorActual)
+							{
+							case SUELO:
+								//GG
+								break;
+							case IZQ:
+								//sigues
+								break;
+							case DCHA:
+								//sigues
+								break;
+							case FINAL:
+								//sigues
+								break;
+							case INTERIOR:
+								//sigues
+								break;
+							default:
+								break;
+							}
+						break;
 						case IZQ:
-							//sigues
+							switch(colorActual)
+							{
+							case SUELO:
+								rober.pilot.stop();
+								rober.pilot.rotate(120);
+								rober.pilot.forward();
+								break;
+							case IZQ:
+								//sigues
+								break;
+							case DCHA:
+								//GG
+								break;
+							case FINAL:
+								rober.pilot.stop();
+								rober.pilot.rotate(-120);
+								rober.pilot.forward();
+								break;
+							case INTERIOR:
+								//sigues
+								break;
+							default:
+								break;
+							}
 							break;
 						case DCHA:
-							//sigues
+							switch(colorActual)
+							{
+							case SUELO:
+								rober.pilot.stop();
+								rober.pilot.rotate(-120);
+								rober.pilot.forward();
+								break;
+							case IZQ:
+								//GG
+								break;
+							case DCHA:
+								//sigues
+								break;
+							case FINAL:
+								rober.pilot.stop();
+								rober.pilot.rotate(120);
+								rober.pilot.forward();
+								break;
+							case INTERIOR:
+								//sigues
+								break;
+							default:
+								break;
+							}
 							break;
 						case FINAL:
-							//sigues
+							switch(colorActual)
+							{
+							case SUELO:
+								rober.pilot.stop();
+								rober.pilot.rotate(-170);
+								rober.pilot.forward();
+								break;
+							case IZQ:
+								rober.pilot.stop();
+								rober.pilot.rotate(45);
+								rober.pilot.forward();
+								break;
+							case DCHA:
+								rober.pilot.stop();
+								rober.pilot.rotate(-45);
+								rober.pilot.forward();
+								break;
+							case FINAL:
+								//sigues
+								break;
+							case INTERIOR:
+								//sigues
+								break;
+							default:
+								break;
+							}
 							break;
 						case INTERIOR:
-							//sigues
+							switch(colorActual)
+							{
+							case SUELO:
+								rober.pilot.stop();
+								rober.pilot.rotate(140);
+								rober.pilot.forward();
+								break;
+							case IZQ:
+								rober.pilot.stop();
+								rober.pilot.rotate(-45);
+								rober.pilot.forward();
+								break;
+							case DCHA:
+								rober.pilot.stop();
+								rober.pilot.rotate(45);
+								rober.pilot.forward();
+								break;
+							case FINAL:
+								aparcao = true;
+								break;
+							case INTERIOR:
+								vecesdentro++;
+								break;
+							default:
+								break;
+							}
 							break;
 						default:
 							break;
-						}
-					break;
-					case IZQ:
-						switch(colorActual)
-						{
-						case SUELO:
-							rober.pilot.stop();
-							rober.pilot.rotate(120);
-							rober.pilot.forward();
-							break;
-						case IZQ:
-							//sigues
-							break;
-						case DCHA:
-							//GG
-							break;
-						case FINAL:
-							rober.pilot.stop();
-							rober.pilot.rotate(-120);
-							rober.pilot.forward();
-							break;
-						case INTERIOR:
-							//sigues
-							break;
-						default:
-							break;
-						}
-						break;
-					case DCHA:
-						switch(colorActual)
-						{
-						case SUELO:
-							rober.pilot.stop();
-							rober.pilot.rotate(-120);
-							rober.pilot.forward();
-							break;
-						case IZQ:
-							//GG
-							break;
-						case DCHA:
-							//sigues
-							break;
-						case FINAL:
-							rober.pilot.stop();
-							rober.pilot.rotate(120);
-							rober.pilot.forward();
-							break;
-						case INTERIOR:
-							//sigues
-							break;
-						default:
-							break;
-						}
-						break;
-					case FINAL:
-						switch(colorActual)
-						{
-						case SUELO:
-							rober.pilot.stop();
-							rober.pilot.rotate(-170);
-							rober.pilot.forward();
-							break;
-						case IZQ:
-							rober.pilot.stop();
-							rober.pilot.rotate(45);
-							rober.pilot.forward();
-							break;
-						case DCHA:
-							rober.pilot.stop();
-							rober.pilot.rotate(-45);
-							rober.pilot.forward();
-							break;
-						case FINAL:
-							//sigues
-							break;
-						case INTERIOR:
-							//sigues
-							break;
-						default:
-							break;
-						}
-						break;
-					case INTERIOR:
-						switch(colorActual)
-						{
-						case SUELO:
-							rober.pilot.stop();
-							rober.pilot.rotate(140);
-							rober.pilot.forward();
-							break;
-						case IZQ:
-							rober.pilot.stop();
-							rober.pilot.rotate(-45);
-							rober.pilot.forward();
-							break;
-						case DCHA:
-							rober.pilot.stop();
-							rober.pilot.rotate(45);
-							rober.pilot.forward();
-							break;
-						case FINAL:
-							aparcao = true;
-							break;
-						case INTERIOR:
-							vecesdentro++;
-							break;
-						default:
-							break;
-						}
-						break;
-					default:
-						break;
-				}
+					}
 				
-				
-				colorAnterior = colorActual;
-				colorActual = rober.color.getColorID();
+					colorAnterior = colorActual;
+					colorActual = rober.color.getColorID();
 			}while(!aparcao);
 			
 
 			rober.pilot.stop();
+			/*
 			if(vecesdentro<2)
 				rober.pilot.rotate(45);
 			else
 				rober.pilot.rotate(170);
 			rober.pilot.travel(150);
-			
+			*/
 			
 			
 			
